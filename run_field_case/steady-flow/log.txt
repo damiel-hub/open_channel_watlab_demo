@@ -1,0 +1,51 @@
+=================================================
+Welcome to Hydroflow !
+=================================================
+Originally created by:
+    Sandra Soares Frazao (1998)
+Contributors:
+    Sylvie (2011)
+    Catherine (2011)
+    Robin Meurice (2020)
+    Pierre-Yves Gousenbourger (2022)
+    Nathan Delpierre (2022)
+    Charles Ryckmans (2022)
+    Martin Petitjean (2024)
+=================================================
+Name of the simulation:
+laonong_Simulation
+=================================================
+Generic parameters of the run: 
+  Start time: 0 s	
+  End time: 1000 s	
+  Courant-Friedrichs-Lewy (CFL) number: 0.9
+=================================================
+Parameters of the computational method: 
+  Shallow-water equations - hydrodynamic
+=================================================
+Reading of input files to set-up the model geometry:
+  Reading nodes in: inputs_laonong\nodes.txt
+    Number of nodes created: 18544
+  Reading cells in: inputs_laonong\cells.txt
+   Number of cells created: 36392
+  Reading interfaces in: inputs_laonong\edges.txt
+   Number of interfaces created: 54935
+=================================================
+Setting initial conditions and model parameters
+  Friction parameters set from: inputs_laonong\friction_values.txt
+  Hydrodynamic initial conditions read from: inputs_laonong\initial_conditions.txt
+=================================================
+Setting source terms
+=================================================
+Output parameters:
+  Maximum values will be recorded every: 1 s
+  Gauges: No gauges
+  Pictures of the hydraulic state: times read in inputs_laonong\pictures_times.txt
+  Section where to measure the discharge: No section to monitor
+=================================================
+Other parameters:
+  Largest initial water depth (h0): 0
+  Minimal characteristic length in a cell (min dx): 2.09593
+  ZERO depth: 0.0001
+=================================================
+Total execution time: 134 sec. for 1000 sec. of simulation.
