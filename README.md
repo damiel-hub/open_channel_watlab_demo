@@ -15,7 +15,7 @@
 ### Steps to Set Up WatLab:
 
 1. **Download and Extract Required Files**  
-   - Download the file **`open_channel_watlab_demo-main.zip`** from the website or directly using this [link]().  
+   - Download the file **`open_channel_watlab_demo-main.zip`** from the website or directly using this [link](https://github.com/damiel-hub/open_channel_watlab_demo/archive/refs/heads/main.zip).  
    - Extract the contents of the ZIP file to your preferred directory.
 
 2. **Install WatLab and Its Dependencies**  
@@ -37,13 +37,13 @@
      python -m pip install seamsh
      ```
 
-3. **Install a C++ Compiler**  
+<!-- 3. **Install a C++ Compiler**  
    - Download and install a C++ compiler from [MSYS2](https://www.msys2.org/). Follow the installation instructions provided on their website.  
    - Add the MSYS2 binary path (default: `C:\msys64\ucrt64\bin`) to your system's environment variables:  
      - Open the "Run" dialog by pressing `Windows + R`, type `SystemPropertiesAdvanced`, and hit Enter.  
-     - Use the Environment Variable Manager to add the path.
+     - Use the Environment Variable Manager to add the path. -->
 
-4. **Run WatLab**  
+3. **Run WatLab**  
    - Open the **`watlab-first-script.py`** file using VS Code.  
    - Open a terminal within VS Code and activate the WatLab environment:  
      ```bash
