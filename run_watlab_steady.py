@@ -26,6 +26,13 @@ result_folder = "results/" + model.name
 model.export.input_folder_name = f"{result_folder}/inputs"
 model.export.output_folder_name = f"{result_folder}/outputs"
 
+my_gauges = [
+    [226955.7, 2562347.0, 0],
+    [226734.1, 2563331.4, 0],
+]
+
+model.set_gauge(gauge_position=my_gauges, time_step=1)
+
 model.export_data()
 model.solve(isParallel=True)
 os.replace("log.txt", f"{result_folder}/log.txt")
