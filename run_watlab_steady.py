@@ -1,16 +1,16 @@
 import watlab
 import os
 
-mesh_path = 'data/msh/laonong_v2/laonong_gmsh_size_10.msh'
+mesh_path = 'data/msh/laonong_narrow_20m/gmsh.msh'
 DEM_path = 'data/raster/raw/laonongDEM_5m.tif'
 
 mesh = watlab.Mesh(mesh_path, reorder=True)
 mesh.set_nodes_elevation_from_tif(DEM_path)
 model = watlab.HydroflowModel(mesh)
 
-model.name = "laonong_steady"
+model.name = "laonong_steady_narrow_20m_cfl05_hydrograph_1000"
 model.ending_time = 1000
-model.Cfl_number = 0.9
+model.Cfl_number = 0.5
 
 model.set_friction_coefficient("domain",0.05)
 model.set_initial_water_level("domain", 0.001)
@@ -30,7 +30,6 @@ my_gauges = [
     [226955.7, 2562347.0, 0],
     [226734.1, 2563331.4, 0],
 ]
-
 model.set_gauge(gauge_position=my_gauges, time_step=1)
 
 model.export_data()

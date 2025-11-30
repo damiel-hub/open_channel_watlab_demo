@@ -22,7 +22,6 @@ title('Hydrograph')
 grid on
 
 print('data/txt/steep/hydrograph.png','-dpng','-r300')
-
 write_watlab_hydrograph_correction_off('data/txt/steep/hydrograph.txt', t, Q)
 
 %%
@@ -44,5 +43,4 @@ title('Hydrograph')
 grid on
 
 print('data/txt/gentle/hydrograph.png','-dpng','-r300')
-
 write_watlab_hydrograph_correction_off('data/txt/gentle/hydrograph.txt', t, Q)
