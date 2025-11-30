@@ -1,0 +1,49 @@
+clear; close all; clc;
+
+addpath(genpath('functions'))
+
+% Inherit the parameters and files from Watlab
+simulation_duration = 3000; % (sec)
+pic_n = 51;
+hydrograph_path = 'data/txt/steep/hydrograph.txt';
+
+
+% Results folder path
+result_png_folder = 'results/laonong_unsteady_narrow_20m_cfl05_hydrograph_steep/pngs_hrdrograph';
+mkdir(result_png_folder)
+
+% MP4 relate parameters
+fps = 5; % frame per second
+mp4_name = 'result.mp4';
+
+%%
+
+tQ = readmatrix(hydrograph_path);
+
+figure
+
+%%
+[time_vals, file_names] = get_hydroflow_filenames(simulation_duration, pic_n);
+
+parfor i_time = 1:length(file_names)
+
+    pic_path = fullfile(watlab_output_folder, ['pic_' file_names{i_time} '.txt']);
+    
+    [xMesh, yMesh, hMesh] = valueMeshMapper(pic_path, 'h', resample_grid_dxdy, 'MeshPath', msh_path);
+    [~, ~, qxMesh] = valueMeshMapper(pic_path, 'qx', resample_grid_dxdy, 'MeshPath', msh_path);
+    [~, ~, qyMesh] = valueMeshMapper(pic_path, 'qy', resample_grid_dxdy, 'MeshPath', msh_path);
+    
+    uMesh = qxMesh./hMesh;
+    vMesh = qyMesh./hMesh;
+    
+    hMesh(hMesh<=0.0001) = nan;
+
+    figure('Visible','off')
+    plot(tQ(:,1), tQ(:,2), 'k-')
+    title(['t = ' num2str(time_vals(i_time)) ' [sec]'])
+    axis(axisXY)
+    print(fullfile(result_png_folder, ['t_' file_names{i_time} '.png']), '-dpng', '-r300')
+end
+
+
+pngs2mp4(result_png_folder, 't_*.png', mp4_name, fps) % Export sequences images to mp4

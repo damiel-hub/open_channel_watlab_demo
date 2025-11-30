@@ -7,9 +7,9 @@ from osgeo import osr
 # Remenber to proceed "pip install seamsh" first!
 
 # Input Datas
-boundarySHP = "data\\shape\\build_gmsh\\laonong_boundary.shp"
-mesh_size_tif = "data\\raster\\build_gmsh\\laonong_gmsh_10m.tif"
-outputName = 'data\\msh\\laonong\\laonong_gmsh_size_10'
+boundarySHP = "data\\shape\\build_gmsh\\laonong_narrow\\boundary.shp"
+mesh_size_tif = "data\\raster\\build_gmsh\\laonong_20m\\gmsh_res.tif"
+outputName = 'data\\msh\\laonong_narrow_20m\\gmsh'
 EPSGcode = 3826
 
 # %%

@@ -1,14 +1,14 @@
 import watlab
 import os
 
-mesh_path = 'data/msh/laonong_narrow_5m_10m/gmsh.msh'
+mesh_path = 'data/msh/laonong_narrow_50m/gmsh.msh'
 DEM_path = 'data/raster/raw/laonongDEM_5m.tif'
 
 mesh = watlab.Mesh(mesh_path)
 mesh.set_nodes_elevation_from_tif(DEM_path)
 model = watlab.HydroflowModel(mesh)
 
-model.name = "laonong_unsteady_narrow_5m_10m_cfl05_hydrograph_steep"
+model.name = "laonong_unsteady_narrow_50m_cfl05_hydrograph_steep"
 model.ending_time = 3000
 model.Cfl_number = 0.5
 

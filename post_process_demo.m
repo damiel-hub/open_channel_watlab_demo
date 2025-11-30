@@ -8,7 +8,7 @@ central_xy = m_shaperead(fullfile('data/shape/cross_sections_system/laonong_cent
 right_xy = m_shaperead(fullfile('data/shape/cross_sections_system/laonong_right')).ncst{1};
 left_xy = m_shaperead(fullfile('data/shape/cross_sections_system/laonong_left')).ncst{1};
 
-% Watlab relate parameters
+% Inherit the parameters from Watlab
 sim_ending_time = 1000; % (sec)
 n_pic = 26;
 pic_folder = 'results/laonong_steady/outputs';

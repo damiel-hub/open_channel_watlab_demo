@@ -1,7 +1,7 @@
 import watlab
 import os
 
-mesh_path = 'data/msh/laonong/laonong_gmsh_size_10.msh'
+mesh_path = 'data/msh/laonong_v2/laonong_gmsh_size_10.msh'
 DEM_path = 'data/raster/raw/laonongDEM_5m.tif'
 
 mesh = watlab.Mesh(mesh_path, reorder=True)
