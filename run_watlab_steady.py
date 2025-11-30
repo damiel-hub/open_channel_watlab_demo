@@ -4,7 +4,7 @@ import os
 mesh_path = 'data/msh/laonong_narrow_20m/gmsh.msh'
 DEM_path = 'data/raster/raw/laonongDEM_5m.tif'
 
-mesh = watlab.Mesh(mesh_path, reorder=True)
+mesh = watlab.Mesh(mesh_path)
 mesh.set_nodes_elevation_from_tif(DEM_path)
 model = watlab.HydroflowModel(mesh)
 
