@@ -80,13 +80,7 @@ if isfile(msh_path)
     fprintf('   > Creating simulation domain mask from GMSH...\n');
     [Nodes, Elements] = read_gmsh_triangles(msh_path);
     TR_geo = triangulation(Elements, Nodes(:,1), Nodes(:,2));
-    
-    % Check which grid points are inside the GMSH triangles
-    % Note: xMesh(:) converts the grid to a column vector for checking
     tri_ids = pointLocation(TR_geo, xMesh(:), yMesh(:));
-    
-    % Create a logical mask (True = inside, False = outside)
-    % Reshape it back to the grid dimensions to match hMesh
     valid_mask = reshape(~isnan(tri_ids), grid_dims);
 else
     fprintf('   > No GMSH file found, skipping mask...\n');
@@ -180,6 +174,8 @@ end
 sequence_plot_time = 10:60:800;
 cmap = parula(length(sequence_plot_time));
 legend_name = {};
+
+% x-Q plot
 figure
 for i_time = 1:length(sequence_plot_time)
     time_differences = abs(times_sec - sequence_plot_time(i_time));
@@ -192,6 +188,7 @@ legend(legend_name, 'Location','best')
 ylabel('Q [cms]'); xlabel('x [m]')
 
 
+% x-h plot
 legend_name = {};
 figure
 for i_time = 1:length(sequence_plot_time)
@@ -206,6 +203,7 @@ ylabel('h_{max} [m]'); xlabel('x [m]')
 ylim([0 30])
 
 
+% x-A plot
 legend_name = {};
 figure
 for i_time = 1:length(sequence_plot_time)
@@ -226,6 +224,8 @@ ylim([0 10000])
 
 sequence_plot_x = 50:500:2000;
 cmap = turbo(length(sequence_plot_x));
+
+% t-h plot
 legend_name = {};
 figure
 for i_x = 1:length(sequence_plot_x)
@@ -239,7 +239,7 @@ legend(legend_name, 'Location','best')
 xlabel('time [sec]')
 ylabel('h_{max} [m]')
 
-
+% t-Q plot
 legend_name = {};
 figure
 for i_x = 1:length(sequence_plot_x)
@@ -266,6 +266,7 @@ ini_x = interp_s(ini_col);
 
 [~, time_index_peak] = max(Q_all,[],1);
 
+% x-t plot
 figure
 plot(interp_s, ini_t, 'ko')
 hold on
@@ -273,6 +274,7 @@ plot(interp_s, times_sec(time_index_peak), 'ro')
 xlabel('x [m]')
 ylabel('t [sec]')
 legend({'front wave arrival time', 'peak arrival time'}, 'Location','northwest')
+
 
 %% --- 5. Helper Functions ---
 function M = create_sparse_interp_matrix(x_src, y_src, Xq, Yq)
