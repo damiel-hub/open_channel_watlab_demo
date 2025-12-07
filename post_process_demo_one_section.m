@@ -17,7 +17,7 @@ h_threshold = 0.0001; % (m)
 
 % Plotting relate parameters
 cmax = 5;
-section_path = 'data/shape/cross_section/section';
+section_path = 'data/shape/cross_section/section_salaawu';
 dem_path = 'data/raster/raw/laonongDEM_5m.tif';
 quiver_factor = 1;
 quiver_sparse = 5;
@@ -31,11 +31,24 @@ fps = 5;
 mp4_name_plane_view = 'plane.mp4';
 mp4_name_side_view = 'side.mp4';
 
+
+%%
+bridgeshape = 'D:\YuanHungCHIU\d_Programme\TYLin\SalaawuBridgeVideo\importData\bridgeShapeFile\onlyBridge2';
+bridge_cell = m_shaperead(bridgeshape).ncst;
+
 %% --- 2. Pre-computation (Static Data) ---
 fprintf('--- Starting Pre-computation ---\n');
 
 % A. Load Geometry
 cross_lrxy = m_shaperead(section_path).ncst{1};
+d_check = sqrt(sum(diff(cross_lrxy, 1, 1).^2, 2));
+
+% Create a mask to keep the first point AND any point where distance > 0
+% (Using a small tolerance 1e-6 to handle floating point issues)
+keep_mask = [true; d_check > 1e-6]; 
+
+% Filter the points
+cross_lrxy = cross_lrxy(keep_mask, :);
 [interp_s, interp_x, interp_y] = interpPolyline_sxy(cross_lrxy, ds_along_section);
 num_points_section = length(interp_x);
 
@@ -194,8 +207,10 @@ fixed_axis = [min(interp_s), max(interp_s), z_min - 0.1*z_range, z_max + 0.1*z_r
 
 parfor i = 1:size(h_all,1)
     f = figure('Visible', 'off'); 
-    
-    hold on 
+    for j = 1:length(bridge_cell)
+        plot(bridge_cell{j}(:,1)+170.25, bridge_cell{j}(:,2), 'k-')
+        hold on
+    end
     water_surface = h_all(i,:) + zb_all(i,:);
     plot(interp_s, zb_all(i,:), 'k-', 'LineWidth', 1.5)
     plot(interp_s, water_surface, 'b.-', 'LineWidth', 1)
@@ -205,7 +220,9 @@ parfor i = 1:size(h_all,1)
     ylabel('z [m]')
     axis(fixed_axis)
     grid on
-    
+    xlim([-65 332.75]+170.25)
+    ylim([510 575])
+    daspect([2 1 1])
     print(fullfile(result_png_folder, ['section_' sequence_time{i} '.png']), '-dpng', '-r150');
     close(f)
 end

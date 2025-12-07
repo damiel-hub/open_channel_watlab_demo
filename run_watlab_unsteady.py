@@ -19,7 +19,7 @@ model.set_boundary_hydrograph('Qin', 'data/txt/steep/hydrograph.txt')
 model.set_transmissive_boundaries("Qout")
 model.set_wall_boundaries(["East", "West"])
 
-model.set_picture_times(n_pic = 51)
+model.set_picture_times(n_pic = 101)
 
 result_folder = "results/" + model.name
 

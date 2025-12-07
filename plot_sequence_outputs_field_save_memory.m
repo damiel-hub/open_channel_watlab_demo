@@ -181,44 +181,33 @@ function M = create_sparse_interp_matrix(x_src, y_src, Xq, Yq)
 end
 
 function RGB = generate_terrain_rgb(xMap, yMap, zMesh)
-% GENERATE_TERRAIN_RGB 
-% Replicates the exact logic of lightterrain2D_imagesc but returns 
-% a static RGB image to save memory and allow independent colormaps.
-
-    % 1. Calculate Normals
     [nx, ny, nz] = surfnorm(xMap, yMap, zMesh);
     
-    % 2. Normalize Surface Normals (Nx3 matrix)
-    % Reshape to columns for vectorized dot product
-    sz = size(nz);
+    lightVector = [0, -1, -1]; 
+    L_unit = lightVector / norm(lightVector);
+    
     N_flat = [nx(:), ny(:), nz(:)];
     N_len = sqrt(sum(N_flat.^2, 2));
-    N_flat = N_flat ./ N_len; % Normalize
+    N_unit = N_flat ./ N_len;
     
-    % 3. Define Light Vector (Matched to your code: [0, -1, -1])
-    L = [0, -1, -1];
-    L = L / norm(L); % Normalize light vector
+    dotProd = N_unit * L_unit'; 
     
-    % 4. Calculate Angle (acos of dot product)
-    % Dot product: sum(A .* B) row-wise. 
-    % Since L is constant, it's just N_flat * L'
-    dotProd = N_flat * L';
+    dotProd = max(min(dotProd, 1), -1); 
+    angle_flat = acos(dotProd);
     
-    % Clamp values to [-1, 1] to prevent complex numbers from precision errors
-    dotProd = max(min(dotProd, 1), -1);
+    angleIndex = 0 : pi/100 : pi;    % Range 0 to pi
+    colorIndex = 0 : 1/100 : 1;      % Range 0 to 1
     
-    angle_rad = acos(dotProd); % Result is 0 to pi
+    raw_color = interp1(angleIndex, colorIndex, angle_flat, 'linear');
     
-    % 5. Map Angle to Color
-    % This is mathematically identical to: color = angle / pi
-    gray_val = angle_rad / pi;
+    gray_map = reshape(raw_color, size(zMesh));
     
-    % 6. Create RGB Array
-    % We replicate the gray value into 3 channels (R, G, B)
-    gray_grid = reshape(gray_val, sz);
+    g_min = min(gray_map(:));
+    g_max = max(gray_map(:));
     
-    RGB = zeros([sz, 3]);
-    RGB(:,:,1) = gray_grid;
-    RGB(:,:,2) = gray_grid;
-    RGB(:,:,3) = gray_grid;
+    if g_max > g_min
+        gray_map = (gray_map - g_min) / (g_max - g_min);
+    end
+    
+    RGB = repmat(gray_map, [1 1 3]);
 end

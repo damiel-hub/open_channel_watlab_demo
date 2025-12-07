@@ -177,27 +177,49 @@ catch
     save(fullfile(result_png_folder, 'Q_h_A.mat'), 'A_all', "h_max_all", "Q_all")
 end
 %% --- 4. Final Plots ---
-cmap = parula(size(Q_all,1));
+sequence_plot_time = 10:60:800
+cmap = parula(length(sequence_plot_time));
+legend_name = {};
 figure
-for i = 1:size(Q_all,1)
-    plot(interp_s, Q_all(i,:), '.-', 'Color', cmap(i,:))
+for i_time = 1:length(sequence_plot_time)
+    time_differences = abs(times_sec - sequence_plot_time(i_time));
+    [~, closest_index] = min(time_differences);
+    plot(interp_s, Q_all(closest_index,:), '-', 'Color',cmap(i_time,:))
     hold on
+    legend_name{end+1} = ['t = ' num2str(times_sec(closest_index)) ' [sec]'];
 end
+legend(legend_name, 'Location','best')
 ylabel('Q [cms]'); xlabel('x [m]')
 
-figure
-for i = 1:size(Q_all,1)
-    plot(interp_s, h_max_all(i,:), '.-', 'Color', cmap(i,:))
-    hold on
-end
-ylabel('h_{max} [m]'); xlabel('x [m]')
 
+legend_name = {};
 figure
-for i = 1:size(Q_all,1)
-    plot(interp_s, A_all(i,:), '.-', 'Color', cmap(i,:))
+for i_time = 1:length(sequence_plot_time)
+    time_differences = abs(times_sec - sequence_plot_time(i_time));
+    [~, closest_index] = min(time_differences);
+    plot(interp_s, h_max_all(closest_index,:), '-', 'Color',cmap(i_time,:))
     hold on
+    legend_name{end+1} = ['t = ' num2str(times_sec(closest_index)) ' [sec]'];
 end
+legend(legend_name, 'Location','best')
+ylabel('h_{max} [m]'); xlabel('x [m]')
+ylim([0 30])
+
+
+legend_name = {};
+figure
+for i_time = 1:length(sequence_plot_time)
+    time_differences = abs(times_sec - sequence_plot_time(i_time));
+    [~, closest_index] = min(time_differences);
+    plot(interp_s, A_all(closest_index,:), '-', 'Color',cmap(i_time,:))
+    hold on
+    legend_name{end+1} = ['t = ' num2str(times_sec(closest_index)) ' [sec]'];
+end
+legend(legend_name, 'Location','best')
 ylabel('A [m^2]'); xlabel('x [m]')
+ylim([0 10000])
+
+
 
 
 %% 
@@ -213,6 +235,28 @@ plot(times_sec, Q_all(:,section_num), 'k.-')
 xlabel('time [sec]')
 ylabel('Q [cms]')
 
+
+
+%%
+has_Q = (Q_all~=0);
+has_Q = cummax(double(has_Q),1);
+initial_Q = [zeros(1, length(interp_s)); diff(has_Q, [], 1)];
+
+
+[ini_row, ini_col, ~] = find(initial_Q==1);
+
+ini_t = times_sec(ini_row);
+ini_x = interp_s(ini_col);
+
+[~, time_index_peak] = max(Q_all,[],1);
+
+figure
+plot(interp_s, ini_t, 'ko')
+hold on
+plot(interp_s, times_sec(time_index_peak), 'ro')
+xlabel('x [m]')
+ylabel('t [sec]')
+legend({'front wave arrival time', 'peak arrival time'}, 'Location','northwest')
 
 %% --- 5. Helper Functions ---
 function M = create_sparse_interp_matrix(x_src, y_src, Xq, Yq)
