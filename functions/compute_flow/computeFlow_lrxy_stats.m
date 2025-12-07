@@ -1,53 +1,29 @@
 function [Q_sum, A_sum, h_max] = computeFlow_lrxy_stats(x, y, h, q_x, q_y)
 % computeFlow_lrxy_stats calculates total flow and area from profile data.
-%
-% Inputs:
-%   x, y     - Coordinates along the cross-section.
-%   h        - Water depth vector.
-%   q_x, q_y - Unit flow vector components.
-%
-% Output:
-%   Q_sum    - Total flow across the cross-section.
-%   A_sum    - Total area of cross-section.
-%   h_max    - Maximum water depth.
+% Uses the cross-product method (Flux = qx*dy - qy*dx) for stability.
 
-    % 1. Reconstruct distance vector (s) from x and y for integration
-    % Calculate distance between consecutive points
-    dx_seg = diff(x);
-    dy_seg = diff(y);
-    ds_seg = sqrt(dx_seg.^2 + dy_seg.^2);
-    % Cumulative sum to get s, starting at 0
-    s = [0; cumsum(ds_seg)];
-
-    % 2. Compute velocities
-    % Avoid division by zero if h is 0
-    h_safe = h;
-    h_safe(h_safe == 0) = NaN; 
+    % 1. Calculate segment geometry (distance between points)
+    dx = diff(x);
+    dy = diff(y);
+    ds = sqrt(dx.^2 + dy.^2);
     
-    v_x = q_x ./ h_safe;
-    v_y = q_y ./ h_safe;
+    % 2. Calculate Flow (Q) using the Mean Value Theorem on segments
+    % We average the unit flow (q) at the two nodes of each segment
+    qx_mid = 0.5 * (q_x(1:end-1) + q_x(2:end));
+    qy_mid = 0.5 * (q_y(1:end-1) + q_y(2:end));
     
-    % Fill NaNs where depth was 0
-    v_x(isnan(v_x)) = 0;
-    v_y(isnan(v_y)) = 0;
+    % The Cross Product: Flow normal to the segment
+    % Flux = q_x * dy - q_y * dx
+    q_normal_segment = qx_mid .* dy - qy_mid .* dx;
     
-    v = sqrt(v_x.^2 + v_y.^2);
-
-    % 3. Compute flow angle relative to the cross-section line
-    % Pad differences to match array length (method from original code)
-    diff_x_padded = [dx_seg(1); dx_seg];
-    diff_y_padded = [dy_seg(1); dy_seg];
+    % Sum all segments to get Total Discharge
+    Q_sum = abs(sum(q_normal_segment, 'all', 'omitmissing'));
     
-    % Calculate angle
-    theta = atan2(diff_x_padded .* v_y - diff_y_padded .* v_x, ...
-                  diff_x_padded .* v_x + diff_y_padded .* v_y);
-
-    % 4. Compute flow per unit width perpendicular to cross-section
-    q_unsolved = v .* sin(theta) .* h;
-    q_unsolved(isnan(q_unsolved)) = 0;
+    % 3. Calculate Area (A) using Trapezoidal Rule
+    % Average depth * width of segment
+    h_mid = 0.5 * (h(1:end-1) + h(2:end));
+    A_sum = sum(h_mid .* ds);
     
-    % 5. Integrate to get totals
-    Q_sum = abs(trapz(s, q_unsolved));
-    A_sum = trapz(s, h);
+    % 4. Max Depth
     h_max = max(h);
 end
