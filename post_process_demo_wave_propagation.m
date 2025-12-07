@@ -177,7 +177,7 @@ catch
     save(fullfile(result_png_folder, 'Q_h_A.mat'), 'A_all', "h_max_all", "Q_all")
 end
 %% --- 4. Final Plots ---
-sequence_plot_time = 10:60:800
+sequence_plot_time = 10:60:800;
 cmap = parula(length(sequence_plot_time));
 legend_name = {};
 figure
@@ -224,18 +224,34 @@ ylim([0 10000])
 
 %% 
 
-section_num = 21;
+sequence_plot_x = 50:500:2000;
+cmap = turbo(length(sequence_plot_x));
+legend_name = {};
 figure
-plot(times_sec, h_max_all(:,section_num), 'k.-')
+for i_x = 1:length(sequence_plot_x)
+    s_differences = abs(interp_s - sequence_plot_x(i_x));
+    [~, closest_index] = min(s_differences);
+    plot(times_sec, h_max_all(:,closest_index), '.-', 'color', cmap(i_x,:))
+    hold on
+    legend_name{end+1} = ['x = ' num2str(sequence_plot_x(i_x)) ' [m]'];
+end
+legend(legend_name, 'Location','best')
 xlabel('time [sec]')
 ylabel('h_{max} [m]')
 
+
+legend_name = {};
 figure
-plot(times_sec, Q_all(:,section_num), 'k.-')
+for i_x = 1:length(sequence_plot_x)
+    s_differences = abs(interp_s - sequence_plot_x(i_x));
+    [~, closest_index] = min(s_differences);
+    plot(times_sec, Q_all(:,closest_index), '.-', 'color', cmap(i_x,:))
+    hold on
+    legend_name{end+1} = ['x = ' num2str(sequence_plot_x(i_x)) ' [m]'];
+end
+legend(legend_name, 'Location','best')
 xlabel('time [sec]')
 ylabel('Q [cms]')
-
-
 
 %%
 has_Q = (Q_all~=0);
